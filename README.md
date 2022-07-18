@@ -1,46 +1,50 @@
-# Getting Started with Create React App
+# STORE-PARTS-EXERCISE
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🛠 Getting started
 
+- You must first clone the repository using your terminal
+```zsh
+git clone https://github.com/GuiADR
+```
+ -  or download the zip from the green button at the beginning of the repository
+
+<img src="https://i.ibb.co/3mLnKMH/clone.png" alt="Download zip" border="0">
+
+- Then you must navigate through the terminal into the repository folder and install the dependencies
+  ```zsh
+  cd pah_folder
+  ```
+  - you can install all dependencies (API and frontend) with the command
+  ```zsh
+  yarn install-all 
+  ``` 
+  or
+
+  ```zsh
+  npm rum install-all 
+  ```
+
+  - if you don't need to install the api, you can run 
+  ```zsh
+  yarn
+  ```
+     or 
+
+  ```zsh
+  npm install
+  ```
+- You must rename the .env.example file to .env and in case it is necessary to change the api's working port
 ## Available Scripts
 
 In the project directory, you can run:
 
+### `yarn start-all`
+or
+### `npm rum start-all`
+
+the above command starts all services (api and frontend), in case the api is already working and you only need to start the frontend, you can run:
+
+### `yarn start`
+or
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
