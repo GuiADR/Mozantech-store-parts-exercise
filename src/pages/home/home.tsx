@@ -20,6 +20,7 @@ const Home: React.FC = () => {
 
   async function getParts() {
 
+
     const newParts = await api.get('/store/parts', {
       params: {
         type: type,
@@ -36,10 +37,7 @@ const Home: React.FC = () => {
   }
 
   function handleOrderBy(newParts: never[]) {
-    console.log(newParts);
     let newOrder = newParts.slice();
-    console.log(newOrder);
-    console.log(orderBy);
     if (orderBy !== '') {
       if (newOrder.length <= 0)
         return;
@@ -97,7 +95,6 @@ const Home: React.FC = () => {
           <Input input={
             <div>
               <select onChange={e => setType(e.target.value)}>
-                <option value=''>-- Type --</option>
                 {allTypes.map((value: string, key: number) => {
                   return (<option value={value} key={key}>{value}</option>)
                 })}
