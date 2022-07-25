@@ -12,8 +12,13 @@ export const spinner = keyframes`
 export const Spinner = styled.span`
   justify-content: center;
   display: flex;
+  width: 120px;
+  &.maxSize {
+    width: 100%;
+  }
 
   & div{
+  z-index: 10;
   width: 50px;
   height: 50px;
   border: 10px solid #f3f3f3; /* Light grey */

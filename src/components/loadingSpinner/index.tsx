@@ -1,7 +1,11 @@
 import { Spinner } from "./styles";
-const LoadingSpinner: React.FC = () => {
+
+interface Props {
+  maxSize?: boolean;
+}
+const LoadingSpinner: React.FC<Props> = ({ maxSize = true }) => {
   return (
-    <Spinner>
+    <Spinner className={(maxSize) ? 'maxSize' : ''}>
       <div></div>
     </Spinner>
   );

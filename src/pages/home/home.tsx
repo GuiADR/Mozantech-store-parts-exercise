@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { MdOutlineArrowUpward, MdOutlineArrowDownward, MdViewList, MdViewModule } from 'react-icons/md';
+import { MdOutlineArrowUpward, MdOutlineArrowDownward, MdViewList, MdViewModule, MdOutlineClose } from 'react-icons/md';
+import EmptyView from '../../components/emptyView';
 import GridView from '../../components/gridView';
 import Input from '../../components/inputs';
 import ListView from '../../components/listView';
@@ -9,26 +10,43 @@ import { Container } from './styles';
 
 
 const Home: React.FC = () => {
-  const [parts, setParts] = useState([]);
-  const [partsOrder, setPartsOrder] = useState([]);
+  const [parts, setParts] = useState<any>([]);
+  const [partsOrder, setPartsOrder] = useState<any>([]);
   const [orderBy, setOrderBy] = useState('');
   const [allTypes, setAllTypes] = useState([]);
-  const [type, setType] = useState('');
+  // const [type, setType] = useState('');
+  const [types, setTypes] = useState<string[]>([]);
   const [query, setQuery] = useState('');
   const [view, setView] = useState('list');
   const [load, setLoad] = useState(true);
 
   async function getParts() {
 
+    let newParts: any[] = [];
+    let queriesLop = query.trim().split(' ');
+    let typesLop = [...types];
 
-    const newParts = await api.get('/store/parts', {
-      params: {
-        type: type,
-        query: query.toLowerCase()
+    if (typesLop.length <= 0)
+      typesLop.push('');
+    if (queriesLop.length <= 0)
+      queriesLop.push('');
+
+    for (let type of typesLop) {
+      for (let q of queriesLop) {
+        setLoad(true);
+        const partsData = await api.get('/store/parts', {
+          params: {
+            type: type,
+            query: q.toLowerCase()
+          }
+        });
+        newParts = [...newParts, ...partsData.data];
       }
-    });
-    setParts(newParts.data);
-    handleOrderBy(newParts.data);
+    }
+
+
+    setParts(newParts);
+    handleOrderBy(newParts);
   };
 
   async function getTypes() {
@@ -36,7 +54,7 @@ const Home: React.FC = () => {
     setAllTypes(newTypes.data);
   }
 
-  function handleOrderBy(newParts: never[]) {
+  function handleOrderBy(newParts: any[]) {
     let newOrder = newParts.slice();
     if (orderBy !== '') {
       if (newOrder.length <= 0)
@@ -62,19 +80,28 @@ const Home: React.FC = () => {
       setOrderBy('');
   }
 
+  function checkType(type: string) {
+    if (!types.includes(type))
+      setTypes([...types, type]);
+    else {
+      setTypes(types.filter(value => value !== type));
+    }
+
+  }
   useEffect(() => {
     const loadContent = async () => {
-      setLoad(true);
       await getParts();
       if (allTypes.length <= 0)
         await getTypes();
       setLoad(false);
     }
     loadContent();
-  }, [type, query]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [types, query]);
 
   useEffect(() => {
     handleOrderBy(parts);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderBy]);
 
   function changeView() {
@@ -92,38 +119,58 @@ const Home: React.FC = () => {
       <Container>
         <div>
           <Input input={<input type='search' placeholder='Search...' value={query} onChange={e => setQuery(e.target.value)}></input>} />
-          <Input input={
-            <div>
-              <select onChange={e => setType(e.target.value)}>
+          <Input className='typesList' input={
+            <div >
+              <div>
+                {(types.length <= 0) ?
+                  <div className='empty'>-- Types --</div>
+                  :
+                  <div className='notEmpty'>
+                    {types.map((value: string, key: number) => {
+
+                      return (<span key={key}>{value} <MdOutlineClose onClick={() => { checkType(value) }} /></span>)
+                    })}
+                  </div>
+                }
+              </div>
+              <ul>
                 {allTypes.map((value: string, key: number) => {
-                  return (<option value={value} key={key}>{value}</option>)
+                  return (<li onClick={() => { checkType(value) }} className={(types.includes(value) ? 'checked' : '')} value={value} key={key}>{value}</li>)
                 })}
-              </select>
+              </ul>
             </div>
           } />
-          <div>
-            <Input input={
-              <button onClick={() => { changeView() }}>{(view === 'list') ?
-                <MdViewList size={40} /> :
-                <MdViewModule size={40} />
-              }</button>
-            } />
-            <Input input={
-              <button
-                onClick={() => { handleChangeOrder(orderBy) }}>
-                {(orderBy === 'asc') ?
-                  <MdOutlineArrowUpward size={20} /> :
-                  (orderBy === 'desc') ?
-                    <MdOutlineArrowDownward size={20} /> :
-                    <>
-                      <MdOutlineArrowDownward size={20} />
-                      <MdOutlineArrowUpward size={20} />
-                    </>
+          {(load) ? <div>
+
+            <LoadingSpinner maxSize={false} />
+          </div> :
+
+            <div>
+              <Input input={
+                <button onClick={() => { changeView() }}>{(view === 'list') ?
+                  <MdViewList size={40} /> :
+                  <MdViewModule size={40} />
                 }</button>
-            } />
-          </div>
+              } />
+              <Input input={
+                <button
+                  onClick={() => { handleChangeOrder(orderBy) }}>
+                  {(orderBy === 'asc') ?
+                    <MdOutlineArrowUpward size={20} /> :
+                    (orderBy === 'desc') ?
+                      <MdOutlineArrowDownward size={20} /> :
+                      <>
+                        <MdOutlineArrowDownward size={20} />
+                        <MdOutlineArrowUpward size={20} />
+                      </>
+                  }</button>
+              } />
+            </div>}
         </div>
-        {(load) ? <LoadingSpinner /> : (view === 'list') ? <ListView items={partsOrder} /> : <GridView items={partsOrder} />}
+        {
+          (load && parts.length <= 0) ? <LoadingSpinner /> :
+            (!load && parts.length <= 0) ? <EmptyView /> :
+              (view === 'list') ? <ListView items={partsOrder} /> : <GridView items={partsOrder} />}
       </Container>
     </section>
   )
